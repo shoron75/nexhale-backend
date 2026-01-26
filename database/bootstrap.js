@@ -4,6 +4,7 @@ import path from "path";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import seed from "./seed.js";
+import seedDemoData from "./seed_demo.js";
 
 dotenv.config();
 
@@ -45,6 +46,9 @@ export async function bootstrapDatabase() {
 
         // 3. Run seeds (idempotent)
         await seed();
+
+        // 4. Run demo seeds (idempotent check inside)
+        await seedDemoData();
 
         console.log("Database bootstrap completed successfully.");
     } catch (error) {

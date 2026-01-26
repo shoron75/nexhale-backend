@@ -8,7 +8,8 @@
 		"start": "node server.js",
 		"dev": "nodemon server.js",
 		"seed": "node database/seed.js",
-		"bootstrap": "node database/bootstrap.js"
+		"bootstrap": "node database/bootstrap.js",
+		"seed:demo": "node database/seed_demo.js"
 	},
 	"keywords": [],
 	"author": "",
