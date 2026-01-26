@@ -1,8 +1,5 @@
 import pool from "../config/db.js";
 
-// Data derived from frontend/src/data/cigaretteBrands.ts
-// I've copied the data array structure here.
-
 const cigaretteBrandsData = [
 	{
 		brand: "Benson & Hedges",
@@ -10,8 +7,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "BATB",
-		displayName: "Benson & Hedges - Special Filter - Full Flavor",
 	},
 	{
 		brand: "Benson & Hedges",
@@ -19,8 +14,6 @@ const cigaretteBrandsData = [
 		category: "Light / Blue",
 		nicotineMg: "0.5–0.8",
 		tarMg: "6–10",
-		company: "BATB",
-		displayName: "Benson & Hedges - Blue Gold - Light / Blue",
 	},
 	{
 		brand: "Benson & Hedges",
@@ -28,8 +21,6 @@ const cigaretteBrandsData = [
 		category: "Switch / Capsule",
 		nicotineMg: "0.6–1.0",
 		tarMg: "8–12",
-		company: "BATB",
-		displayName: "Benson & Hedges - Switch / Platinum - Switch / Capsule",
 	},
 	{
 		brand: "Gold Leaf",
@@ -37,8 +28,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "BATB",
-		displayName: "Gold Leaf - JP Gold Leaf - Full Flavor",
 	},
 	{
 		brand: "John Player",
@@ -46,8 +35,6 @@ const cigaretteBrandsData = [
 		category: "Light / Blue",
 		nicotineMg: "0.5–0.8",
 		tarMg: "6–10",
-		company: "BATB",
-		displayName: "John Player - Special - Light / Blue",
 	},
 	{
 		brand: "John Player",
@@ -55,8 +42,6 @@ const cigaretteBrandsData = [
 		category: "Switch / Capsule",
 		nicotineMg: "0.6–1.0",
 		tarMg: "8–12",
-		company: "BATB",
-		displayName: "John Player - Switch - Switch / Capsule",
 	},
 	{
 		brand: "Lucky Strike",
@@ -64,8 +49,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "BATB",
-		displayName: "Lucky Strike - Original / Red - Full Flavor",
 	},
 	{
 		brand: "Lucky Strike",
@@ -73,9 +56,6 @@ const cigaretteBrandsData = [
 		category: "Switch / Capsule",
 		nicotineMg: "0.6–1.0",
 		tarMg: "8–12",
-		company: "BATB",
-		displayName:
-			"Lucky Strike - Cool Crunch / Fresh Twist - Switch / Capsule",
 	},
 	{
 		brand: "Marlboro",
@@ -83,8 +63,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "JTI",
-		displayName: "Marlboro - Red - Full Flavor",
 	},
 	{
 		brand: "Marlboro",
@@ -92,8 +70,6 @@ const cigaretteBrandsData = [
 		category: "Light / Blue",
 		nicotineMg: "0.5–0.8",
 		tarMg: "6–10",
-		company: "JTI",
-		displayName: "Marlboro - Gold / Advance - Light / Blue",
 	},
 	{
 		brand: "Winston",
@@ -101,8 +77,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "JTI",
-		displayName: "Winston - Red - Full Flavor",
 	},
 	{
 		brand: "Winston",
@@ -110,8 +84,6 @@ const cigaretteBrandsData = [
 		category: "Light / Blue",
 		nicotineMg: "0.5–0.8",
 		tarMg: "6–10",
-		company: "JTI",
-		displayName: "Winston - Blue - Light / Blue",
 	},
 	{
 		brand: "Camel",
@@ -119,8 +91,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "JTI",
-		displayName: "Camel - Filter - Full Flavor",
 	},
 	{
 		brand: "Camel",
@@ -128,8 +98,6 @@ const cigaretteBrandsData = [
 		category: "Light / Blue",
 		nicotineMg: "0.5–0.8",
 		tarMg: "6–10",
-		company: "JTI",
-		displayName: "Camel - Blue - Light / Blue",
 	},
 	{
 		brand: "Pall Mall",
@@ -137,8 +105,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "BATB",
-		displayName: "Pall Mall - Full Flavor - Full Flavor",
 	},
 	{
 		brand: "Pall Mall",
@@ -146,8 +112,6 @@ const cigaretteBrandsData = [
 		category: "Light / Blue",
 		nicotineMg: "0.5–0.8",
 		tarMg: "6–10",
-		company: "BATB",
-		displayName: "Pall Mall - Smooth / Blue - Light / Blue",
 	},
 	{
 		brand: "Star",
@@ -155,8 +119,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "BATB",
-		displayName: "Star - Star Filter - Full Flavor",
 	},
 	{
 		brand: "Derby",
@@ -164,8 +126,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "BATB",
-		displayName: "Derby - Full Flavor - Full Flavor",
 	},
 	{
 		brand: "Derby",
@@ -173,8 +133,6 @@ const cigaretteBrandsData = [
 		category: "Light / Blue",
 		nicotineMg: "0.5–0.8",
 		tarMg: "6–10",
-		company: "BATB",
-		displayName: "Derby - Style - Light / Blue",
 	},
 	{
 		brand: "Royals",
@@ -182,8 +140,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "BATB",
-		displayName: "Royals - Gold / Next - Full Flavor",
 	},
 	{
 		brand: "Sheikh",
@@ -191,8 +147,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "JTI",
-		displayName: "Sheikh - Sheikh Filter - Full Flavor",
 	},
 	{
 		brand: "Navy",
@@ -200,8 +154,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "JTI",
-		displayName: "Navy - Navy Regular - Full Flavor",
 	},
 	{
 		brand: "Hollywood",
@@ -209,8 +161,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "BATB",
-		displayName: "Hollywood - Blue / Red - Full Flavor",
 	},
 	{
 		brand: "Pilot",
@@ -218,8 +168,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "BATB",
-		displayName: "Pilot - Pilot Filter - Full Flavor",
 	},
 	{
 		brand: "Marise",
@@ -227,8 +175,6 @@ const cigaretteBrandsData = [
 		category: "Full Flavor",
 		nicotineMg: "0.8–1.2",
 		tarMg: "10–14",
-		company: "Abul Khair Tobacco",
-		displayName: "Marise - Special Blend - Full Flavor",
 	},
 	{
 		brand: "Other",
@@ -236,50 +182,175 @@ const cigaretteBrandsData = [
 		category: "Unknown",
 		nicotineMg: "0.5–1.2",
 		tarMg: "6–14",
-		company: "Various",
-		displayName: "Other",
 	},
 ];
 
-async function seedBrands() {
+async function seed() {
 	try {
-		console.log("Seeding cigarette brands...");
+		console.log("Starting seeding process...");
 
-		// Clear existing
-		await pool.query("TRUNCATE TABLE Cigarette_Brand");
+		// 1. Seed Leaderboard
+		const [leaderboardCount] = await pool.query(
+			"SELECT COUNT(*) as count FROM Leaderboard",
+		);
+		if (leaderboardCount[0].count === 0) {
+			console.log("Seeding Leaderboard...");
+			await pool.query(
+				"INSERT INTO Leaderboard (period_type, `rank`, badge_type) VALUES ?",
+				[
+					[
+						["Daily", 1, "Gold"],
+						["Daily", 2, "Silver"],
+						["Daily", 3, "Bronze"],
+						["Monthly", 1, "Platinum"],
+						["Monthly", 2, "Gold"],
+					],
+				],
+			);
+		}
 
-		const query = `
-      INSERT INTO Cigarette_Brand 
-      (brand_name, variant, category, nicotine_per_cigarette, tar_per_cigarette) 
-      VALUES ?
-    `;
+		// 2. Seed Moods
+		const [moodCount] = await pool.query("SELECT COUNT(*) as count FROM Mood");
+		if (moodCount[0].count === 0) {
+			console.log("Seeding Moods...");
+			const moods = [
+				"Happy",
+				"Stressed",
+				"Anxious",
+				"Relaxed",
+				"Depressed",
+				"Angry",
+				"Tired",
+				"Focused",
+				"Lonely",
+			];
+			await pool.query("INSERT INTO Mood (mood_type) VALUES ?", [
+				moods.map((m) => [m]),
+			]);
+		}
 
-		// Helper to parse "0.8-1.2" or "10" to average
-		const parseRange = (val) => {
-			if (!val) return 0;
-			const parts = val.toString().split(/[–-]/); // split by en-dash or hyphen
-			if (parts.length === 2) {
-				return (parseFloat(parts[0]) + parseFloat(parts[1])) / 2;
-			}
-			return parseFloat(val);
-		};
+		// 3. Seed Health Impact
+		const [impactCount] = await pool.query(
+			"SELECT COUNT(*) as count FROM Health_Impact",
+		);
+		if (impactCount[0].count === 0) {
+			console.log("Seeding Health Impact...");
+			const healthImpacts = [
+				[1, 0, 1500, 0, 120, 10, "Safe / Monitoring"],
+				[2, 1501, 3000, 121, 250, 25, "Monitoring"],
+				[3, 3001, 4500, 251, 380, 40, "Elevated"],
+				[4, 4501, 6000, 381, 500, 60, "High"],
+				[5, 6001, 8000, 501, 650, 80, "Critical"],
+				[6, 8001, 999999, 651, 999999, 95, "Emergency"],
+			];
+			await pool.query(
+				"INSERT INTO Health_Impact (impact_id, tar_min, tar_max, nicotine_min, nicotine_max, risk_percentage, risk_tier) VALUES ?",
+				[healthImpacts],
+			);
 
-		const values = cigaretteBrandsData.map((item) => [
-			item.brand,
-			item.variant,
-			item.category,
-			parseRange(item.nicotineMg),
-			parseRange(item.tarMg),
-		]);
+			console.log("Seeding Health Impact Details...");
+			const details = [
+				[
+					1,
+					"Behavioral",
+					"Statistical likelihood of lung stress is minimal; natural clearing processes remain highly active.",
+				],
+				[
+					1,
+					"Addiction",
+					"Low impact on brain chemistry; behavioral pattern is likely situational rather than a physical requirement.",
+				],
+				[
+					2,
+					"Behavioral",
+					"Possible early probability of minor airway irritation or statistical decrease in peak athletic stamina.",
+				],
+				[
+					2,
+					"Addiction",
+					"Moderate behavioral impact; daily routines begin to statistically align with specific smoking times.",
+				],
+				[
+					3,
+					"Behavioral",
+					"Increased statistical probability of cardiovascular strain; potential for heart rate to remain elevated post-activity.",
+				],
+				[
+					3,
+					"Addiction",
+					"High addiction potential; statistical likelihood of withdrawal-related irritability or restlessness if intake is delayed.",
+				],
+				[
+					4,
+					"Behavioral",
+					"Significant statistical probability of persistent lung stress; the body's self-cleaning efficiency is likely hampered.",
+				],
+				[
+					4,
+					"Addiction",
+					"Very high addiction impact; behavioral patterns are frequently dictated by the brain's chemical requirement for nicotine.",
+				],
+				[
+					5,
+					"Behavioral",
+					"High statistical likelihood of chronic respiratory strain and consistent stress on the heart and blood vessels.",
+				],
+				[
+					5,
+					"Addiction",
+					"Extreme addiction impact; statistical data suggests smoking likely occurs within 30 minutes of waking; high behavioral dependency.",
+				],
+				[
+					6,
+					"Behavioral",
+					"Severe statistical probability of long-term lung and heart fatigue; physical capacity is likely consistently compromised.",
+				],
+				[
+					6,
+					"Addiction",
+					"Maximum addiction impact; daily behavior is almost entirely focused on maintaining nicotine levels; highest probability of severe withdrawal.",
+				],
+			];
+			await pool.query(
+				"INSERT INTO Health_Impact_Detail (impact_id, impact_type, impact_description) VALUES ?",
+				[details],
+			);
+		}
 
-		await pool.query(query, [values]);
+		// 4. Seed Cigarette Brands
+		const [brandCount] = await pool.query(
+			"SELECT COUNT(*) as count FROM Cigarette_Brand",
+		);
+		if (brandCount[0].count === 0) {
+			console.log("Seeding Cigarette Brands...");
+			const parseRange = (val) => {
+				if (!val) return 0;
+				const parts = val.toString().split(/[–-]/);
+				if (parts.length === 2) {
+					return (parseFloat(parts[0]) + parseFloat(parts[1])) / 2;
+				}
+				return parseFloat(val);
+			};
 
-		console.log(`Seeded ${values.length} brands successfully.`);
-		process.exit(0);
+			const brandValues = cigaretteBrandsData.map((item) => [
+				item.brand,
+				item.variant,
+				item.category,
+				parseRange(item.nicotineMg),
+				parseRange(item.tarMg),
+			]);
+
+			await pool.query(
+				"INSERT INTO Cigarette_Brand (brand_name, variant, category, nicotine_per_cigarette, tar_per_cigarette) VALUES ?",
+				[brandValues],
+			);
+		}
+
+		console.log("Seeding completed successfully.");
 	} catch (error) {
-		console.error("Error seeding data:", error);
-		process.exit(1);
+		console.error("Error during seeding:", error);
+		throw error;
 	}
 }
 
-seedBrands();
+export default seed;

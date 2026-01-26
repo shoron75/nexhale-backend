@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { bootstrapDatabase } from "./database/bootstrap.js";
 import authRoutes from "./routes/auth.routes.js";
 import brandsRoutes from "./routes/brands.routes.js";
 import quitPlanRoutes from "./routes/quitPlan.routes.js";
@@ -12,6 +13,14 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Bootstrap Database
+try {
+	await bootstrapDatabase();
+} catch (error) {
+	console.error("Critical error during database bootstrap:", error);
+	process.exit(1);
+}
 
 app.use(cors());
 app.use(express.json());
