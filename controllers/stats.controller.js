@@ -1,5 +1,58 @@
 import pool from "../config/db.js";
 
+const flavorContributions = {
+	Fruit: 0.3,
+	Candy: 0.3,
+	Menthol: 0.25,
+	Mint: 0.25,
+	Tobacco: 0.35,
+	Dessert: 0.5,
+	Creamy: 0.5,
+	Neutral: 0.1,
+	Unflavored: 0.1,
+	Unknown: 0.4,
+	Mixed: 0.4,
+};
+
+const getFlavorContribution = (flavor) => {
+	if (!flavor) return 0.4;
+	for (const [key, value] of Object.entries(flavorContributions)) {
+		if (flavor.toLowerCase().includes(key.toLowerCase())) return value;
+	}
+	return 0.4;
+};
+
+const calculateVapeMetrics = (log) => {
+	const puffs = parseInt(log.puffs || 0);
+	const liquid = parseFloat(log.liquid_amount || 0);
+	const pg = parseInt(log.pg_percentage || 50);
+	const nicotine = parseFloat(log.nicotine_amount || 0);
+	const flavor = log.flavor || "Unknown";
+
+	const pgContribution = liquid * (pg / 100);
+	const flavorContr = getFlavorContribution(flavor);
+	const cei = puffs * (1.0 + pgContribution + flavorContr);
+
+	return { nicotine, cei };
+};
+
+const getZone = (nicotine, cei) => {
+	let nicZone = "Green";
+	if (nicotine > 15) nicZone = "Red";
+	else if (nicotine > 6) nicZone = "Yellow";
+
+	let ceiZone = "Green";
+	if (cei > 300) ceiZone = "Red";
+	else if (cei > 150) ceiZone = "Yellow";
+
+	const zones = ["Green", "Yellow", "Red"];
+	const worstIdx = Math.max(
+		zones.indexOf(nicZone),
+		zones.indexOf(ceiZone),
+	);
+	return zones[worstIdx];
+};
+
 export const getSummary = async (req, res) => {
 	const userId = req.user.id;
 	const month = req.query.month || new Date().getMonth() + 1;
@@ -20,25 +73,51 @@ export const getSummary = async (req, res) => {
 		const smokeStats = smokeRows[0];
 
 		const [vapeRows] = await pool.query(
-			"SELECT COALESCE(SUM(puffs), 0) as totalPuffs, COALESCE(SUM(liquid_amount), 0) as totalLiquid, COALESCE(SUM(nicotine_amount), 0) as totalVapeNicotine FROM Vape_Log WHERE user_id = ? AND MONTH(log_date) = ? AND YEAR(log_date) = ?",
+			"SELECT puffs, liquid_amount, nicotine_amount, flavor, pg_percentage, log_date FROM Vape_Log WHERE user_id = ? AND MONTH(log_date) = ? AND YEAR(log_date) = ?",
 			[userId, month, year],
 		);
-		const vapeStats = vapeRows[0];
+
+		let totalVapeNic = 0;
+		let totalVapeCEI = 0;
+
+		vapeRows.forEach((log) => {
+			const metrics = calculateVapeMetrics(log);
+			totalVapeNic += metrics.nicotine;
+			totalVapeCEI += metrics.cei;
+		});
+
+		const [ytdRows] = await pool.query(
+			"SELECT COALESCE(SUM(cost), 0) as ytdCost FROM Smoking_Log WHERE user_id = ? AND YEAR(log_date) = ? AND MONTH(log_date) <= ?",
+			[userId, year, month],
+		);
+		const ytdCost = ytdRows[0].ytdCost;
+
+		// Get current daily zone (for today)
+		const [todayVape] = await pool.query(
+			"SELECT puffs, liquid_amount, nicotine_amount, flavor, pg_percentage FROM Vape_Log WHERE user_id = ? AND log_date = CURDATE()",
+			[userId],
+		);
+		let dailyNic = 0;
+		let dailyCEI = 0;
+		todayVape.forEach((log) => {
+			const m = calculateVapeMetrics(log);
+			dailyNic += m.nicotine;
+			dailyCEI += m.cei;
+		});
 
 		const combined = {
 			totalNicotine: (
-				parseFloat(smokeStats.totalNicotine || 0) +
-				parseFloat(vapeStats.totalVapeNicotine || 0)
+				parseFloat(smokeStats.totalNicotine || 0) + totalVapeNic
 			).toFixed(2),
 			totalTar: parseFloat(smokeStats.totalTar || 0).toFixed(2),
 			totalCost: parseFloat(smokeStats.totalCost || 0).toFixed(2),
 			totalCigarettes: parseInt(smokeStats.totalCigarettes || 0),
-			totalPuffs: parseInt(vapeStats.totalPuffs || 0),
-			totalLiquid: parseFloat(vapeStats.totalLiquid || 0).toFixed(2),
+			totalVapeCEI: totalVapeCEI.toFixed(2),
 			totalChemical: (
-				parseFloat(smokeStats.totalTar || 0) * 0.05 +
-				parseFloat(vapeStats.totalPuffs || 0) * 0.1
+				parseFloat(smokeStats.totalTar || 0) * 0.05 + totalVapeCEI
 			).toFixed(2),
+			ytdCost: parseFloat(ytdCost || 0).toFixed(2),
+			dailyZone: getZone(dailyNic, dailyCEI),
 		};
 
 		res.json(combined);
@@ -118,52 +197,77 @@ export const getDailyStats = async (req, res) => {
 
 export const getWeeklyStats = async (req, res) => {
 	const userId = req.user.id;
+	const month = parseInt(req.query.month) || new Date().getMonth() + 1;
+	const year = parseInt(req.query.year) || new Date().getFullYear();
+
 	try {
+		// We'll split the month into 4 buckets: Days 1-7, 8-14, 15-21, 22-end
+		const buckets = [
+			{ name: "Week 1", start: 1, end: 7 },
+			{ name: "Week 2", start: 8, end: 14 },
+			{ name: "Week 3", start: 15, end: 21 },
+			{ name: "Week 4", start: 22, end: 31 },
+		];
+
 		const [smoke] = await pool.query(
 			`
-            SELECT WEEK(log_date) as week_num,
-                   SUM(sl.cigarette_count * cb.nicotine_per_cigarette) as nicotine,
-                   SUM(sl.cigarette_count * cb.tar_per_cigarette) as tar
+            SELECT DAY(log_date) as day_num,
+                   (sl.cigarette_count * cb.nicotine_per_cigarette) as nicotine,
+                   (sl.cigarette_count * cb.tar_per_cigarette) as tar
             FROM Smoking_Log sl
             JOIN Cigarette_Brand cb ON sl.brand_id = cb.brand_id
-            WHERE sl.user_id = ? AND log_date >= DATE_SUB(CURDATE(), INTERVAL 4 WEEK)
-            GROUP BY week_num
-            ORDER BY week_num ASC
+            WHERE sl.user_id = ? AND MONTH(log_date) = ? AND YEAR(log_date) = ?
         `,
-			[userId],
+			[userId, month, year],
 		);
 
 		const [vape] = await pool.query(
 			`
-            SELECT WEEK(log_date) as week_num,
-                   SUM(nicotine_amount) as nicotine
+            SELECT DAY(log_date) as day_num,
+                   nicotine_amount as nicotine,
+                   puffs,
+                   liquid_amount,
+                   flavor,
+                   pg_percentage
             FROM Vape_Log
-            WHERE user_id = ? AND log_date >= DATE_SUB(CURDATE(), INTERVAL 4 WEEK)
-            GROUP BY week_num
-            ORDER BY week_num ASC
+            WHERE user_id = ? AND MONTH(log_date) = ? AND YEAR(log_date) = ?
         `,
-			[userId],
+			[userId, month, year],
 		);
 
-		const weeksMap = new Map();
-		[...smoke, ...vape].forEach((r) => {
-			const existing = weeksMap.get(r.week_num) || {
-				nicotine: 0,
-				tar: 0,
-			};
-			weeksMap.set(r.week_num, {
-				nicotine: existing.nicotine + parseFloat(r.nicotine || 0),
-				tar: existing.tar + parseFloat(r.tar || 0),
-			});
-		});
+		const result = buckets.map((bucket) => {
+			let nic = 0;
+			let tar = 0;
+			let cei = 0;
 
-		const result = Array.from(weeksMap.entries())
-			.sort((a, b) => a[0] - b[0])
-			.map(([num, data], i) => ({
-				name: `Week ${i + 1}`,
-				nicotine: parseFloat(data.nicotine.toFixed(2)),
-				tar: parseFloat(data.tar.toFixed(2)),
-			}));
+			smoke.forEach((r) => {
+				if (r.day_num >= bucket.start && r.day_num <= bucket.end) {
+					nic += parseFloat(r.nicotine || 0);
+					tar += parseFloat(r.tar || 0);
+				}
+			});
+
+			vape.forEach((r) => {
+				if (r.day_num >= bucket.start && r.day_num <= bucket.end) {
+					const m = calculateVapeMetrics({
+						puffs: r.puffs,
+						liquid_amount: r.liquid_amount, // Need to add this to query
+						nicotine_amount: r.nicotine,
+						flavor: r.flavor, // Need to add this
+						pg_percentage: r.pg_percentage, // Need to add this
+					});
+					nic += m.nicotine;
+					cei += m.cei;
+				}
+			});
+
+			return {
+				name: bucket.name,
+				nicotine: parseFloat(nic.toFixed(2)),
+				tar: parseFloat(tar.toFixed(2)),
+				chemical: parseFloat((tar * 0.05 + cei).toFixed(2)),
+			};
+		});
 
 		res.json(result);
 	} catch (error) {
@@ -256,15 +360,22 @@ export const getHealthImpact = async (req, res) => {
 			[userId, month, year],
 		);
 		const [vape] = await pool.query(
-			"SELECT SUM(nicotine_amount) as nic, SUM(puffs) as puffs FROM Vape_Log WHERE user_id = ? AND MONTH(log_date) = ? AND YEAR(log_date) = ?",
+			"SELECT puffs, liquid_amount, nicotine_amount, flavor, pg_percentage FROM Vape_Log WHERE user_id = ? AND MONTH(log_date) = ? AND YEAR(log_date) = ?",
 			[userId, month, year],
 		);
 
-		const totalNic =
-			parseFloat(smoke[0].nic || 0) + parseFloat(vape[0].nic || 0);
+		let totalVapeNic = 0;
+		let totalVapeCEI = 0;
+
+		vape.forEach((log) => {
+			const m = calculateVapeMetrics(log);
+			totalVapeNic += m.nicotine;
+			totalVapeCEI += m.cei;
+		});
+
+		const totalNic = parseFloat(smoke[0].nic || 0) + totalVapeNic;
 		const totalTar = parseFloat(smoke[0].tar || 0);
-		const totalPuffs = parseInt(vape[0].puffs || 0);
-		const cei = totalPuffs * 0.1;
+		const totalCEI = parseFloat(smoke[0].tar || 0) * 0.05 + totalVapeCEI;
 
 		const [impacts] = await pool.query(
 			`
@@ -275,7 +386,7 @@ export const getHealthImpact = async (req, res) => {
          OR (? BETWEEN hi.nicotine_min AND hi.nicotine_max)
       ORDER BY hi.impact_id DESC
     `,
-			[totalTar, totalNic],
+			[totalCEI, totalNic],
 		);
 
 		if (impacts.length === 0) {
@@ -286,8 +397,7 @@ export const getHealthImpact = async (req, res) => {
 				riskTier: first[0].risk_tier,
 				riskPercentage: first[0].risk_percentage,
 				nicotineIntake: totalNic.toFixed(1),
-				tarIntake: totalTar.toFixed(1),
-				ceiIntake: cei.toFixed(1),
+				ceiIntake: totalCEI.toFixed(1),
 				details: [],
 			});
 		}
@@ -304,8 +414,7 @@ export const getHealthImpact = async (req, res) => {
 			riskTier: tier.risk_tier,
 			riskPercentage: tier.risk_percentage,
 			nicotineIntake: totalNic.toFixed(1),
-			tarIntake: totalTar.toFixed(1),
-			ceiIntake: cei.toFixed(1),
+			ceiIntake: totalCEI.toFixed(1),
 			details,
 		});
 	} catch (error) {

@@ -253,42 +253,42 @@ async function seed() {
 				[
 					1,
 					"Behavioral",
-					"Statistical likelihood of lung stress is minimal; natural clearing processes remain highly active.",
+					"Statistical likelihood of airway irritation is minimal; lung recovery remains highly active.",
 				],
 				[
 					1,
 					"Addiction",
-					"Low impact on brain chemistry; behavioral pattern is likely situational rather than a physical requirement.",
+					"Low impact on brain chemistry; usage is likely situational rather than a physical requirement.",
 				],
 				[
 					2,
 					"Behavioral",
-					"Possible early probability of minor airway irritation or statistical decrease in peak athletic stamina.",
+					"Possible early probability of throat dryness or statistical decrease in peak athletic stamina.",
 				],
 				[
 					2,
 					"Addiction",
-					"Moderate behavioral impact; daily routines begin to statistically align with specific smoking times.",
+					"Moderate behavioral impact; daily routines begin to statistically align with specific vaping times.",
 				],
 				[
 					3,
 					"Behavioral",
-					"Increased statistical probability of cardiovascular strain; potential for heart rate to remain elevated post-activity.",
+					"Increased statistical probability of cardiovascular strain; heart rate may remain elevated longer.",
 				],
 				[
 					3,
 					"Addiction",
-					"High addiction potential; statistical likelihood of withdrawal-related irritability or restlessness if intake is delayed.",
+					"High addiction potential; statistical likelihood of cravings or restlessness if vaping is delayed.",
 				],
 				[
 					4,
 					"Behavioral",
-					"Significant statistical probability of persistent lung stress; the body's self-cleaning efficiency is likely hampered.",
+					"Significant statistical probability of persistent airway stress; body’s self-cleaning efficiency may be hampered.",
 				],
 				[
 					4,
 					"Addiction",
-					"Very high addiction impact; behavioral patterns are frequently dictated by the brain's chemical requirement for nicotine.",
+					"Very high addiction impact; behavioral patterns frequently dictated by the brain’s chemical requirement.",
 				],
 				[
 					5,
@@ -298,17 +298,17 @@ async function seed() {
 				[
 					5,
 					"Addiction",
-					"Extreme addiction impact; statistical data suggests smoking likely occurs within 30 minutes of waking; high behavioral dependency.",
+					"Extreme addiction impact; statistical data suggests vaping occurs frequently throughout the day; high dependency.",
 				],
 				[
 					6,
 					"Behavioral",
-					"Severe statistical probability of long-term lung and heart fatigue; physical capacity is likely consistently compromised.",
+					"Severe statistical probability of long-term lung fatigue; physical capacity is likely consistently compromised.",
 				],
 				[
 					6,
 					"Addiction",
-					"Maximum addiction impact; daily behavior is almost entirely focused on maintaining nicotine levels; highest probability of severe withdrawal.",
+					"Maximum addiction impact; daily behavior is almost entirely focused on maintaining nicotine levels.",
 				],
 			];
 			await pool.query(
