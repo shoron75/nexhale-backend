@@ -126,7 +126,7 @@ export const getSummary = async (req, res) => {
                     vb.nicotine_per_ml
              FROM Vape_Log vl
              LEFT JOIN Vape_Brand vb ON vl.brand_id = vb.brand_id
-             WHERE vl.user_id = ? AND vl.log_date = CURDATE()`,
+             WHERE vl.user_id = ? AND DATE(vl.log_date) = CURDATE()`,
 			[userId],
 		);
 
@@ -136,7 +136,7 @@ export const getSummary = async (req, res) => {
                     SUM(sl.cigarette_count) as count
              FROM Smoking_Log sl
              JOIN Cigarette_Brand cb ON sl.brand_id = cb.brand_id
-             WHERE sl.user_id = ? AND sl.log_date = CURDATE()`,
+             WHERE sl.user_id = ? AND DATE(sl.log_date) = CURDATE()`,
 			[userId]
 		);
 
@@ -184,8 +184,8 @@ export const getDailyStats = async (req, res) => {
             FROM Smoking_Log sl
             JOIN Cigarette_Brand cb ON sl.brand_id = cb.brand_id
             WHERE sl.user_id = ? AND log_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
-            GROUP BY log_date, day
-            ORDER BY log_date ASC
+            GROUP BY DATE(log_date), day
+            ORDER BY DATE(log_date) ASC
         `,
 			[userId],
 		);
@@ -196,8 +196,8 @@ export const getDailyStats = async (req, res) => {
                    SUM(nicotine_amount) as nicotine
             FROM Vape_Log
             WHERE user_id = ? AND log_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
-            GROUP BY log_date, day
-            ORDER BY log_date ASC
+            GROUP BY DATE(log_date), day
+            ORDER BY DATE(log_date) ASC
         `,
 			[userId],
 		);

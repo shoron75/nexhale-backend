@@ -96,8 +96,8 @@ export const logProgress = async (req, res) => {
 
 	try {
 		const [result] = await pool.query(
-			"INSERT INTO Smoking_Log (user_id, log_date, cigarette_count, brand_id, cost) VALUES (?, ?, ?, ?, ?)",
-			[userId, date, cigaretteCount, brandId, cost || 0],
+			"INSERT INTO Smoking_Log (user_id, log_date, cigarette_count, brand_id, cost) VALUES (?, NOW(), ?, ?, ?)",
+			[userId, cigaretteCount, brandId, cost || 0],
 		);
 
 		if (mood) {
@@ -124,7 +124,6 @@ export const logProgress = async (req, res) => {
 export const logVapeProgress = async (req, res) => {
 	const userId = req.user.id;
 	const {
-		date,
 		puffs,
 		liquidAmount,
 		flavor,
@@ -135,10 +134,9 @@ export const logVapeProgress = async (req, res) => {
 
 	try {
 		const [result] = await pool.query(
-			"INSERT INTO Vape_Log (user_id, log_date, puffs, liquid_amount, nicotine_amount, flavor, pg_percentage) VALUES (?, ?, ?, ?, ?, ?, ?)",
+			"INSERT INTO Vape_Log (user_id, log_date, puffs, liquid_amount, nicotine_amount, flavor, pg_percentage) VALUES (?, NOW(), ?, ?, ?, ?, ?)",
 			[
 				userId,
-				date,
 				puffs,
 				liquidAmount,
 				nicotineAmount || 0,

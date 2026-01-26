@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS Health_Impact_Detail (
 -- =====================
 CREATE TABLE IF NOT EXISTS Smoking_Log (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
-    log_date DATE,
+    log_date DATETIME,
     cigarette_count INT,
     cost DECIMAL(10,2),
     user_id INT,
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS Smoking_Log (
 -- =====================
 CREATE TABLE IF NOT EXISTS Vape_Log (
     vape_log_id INT AUTO_INCREMENT PRIMARY KEY,
-    log_date DATE,
+    log_date DATETIME,
     puffs INT,
     liquid_amount DECIMAL(6,2),
     nicotine_amount DECIMAL(8,2),

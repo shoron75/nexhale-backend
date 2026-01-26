@@ -10,7 +10,17 @@ export const getProfile = async (req, res) => {
 		);
 		if (rows.length === 0)
 			return res.status(404).json({ message: "User not found" });
-		res.json(rows[0]);
+
+		const user = rows[0];
+		res.json({
+			id: user.user_id,
+			username: user.user_name,
+			email: user.email,
+			preferredBrand: user.preferred_brand,
+			preferredVapeFlavor: user.preferred_vape_flavor,
+			preferredVapeLiquidAmount: user.preferred_vape_liquid_amount,
+			registrationDate: user.registration_date,
+		});
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: "Server error" });

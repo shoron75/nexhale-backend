@@ -17,7 +17,7 @@ export const getLeaderboard = async (req, res) => {
 		query = `
       SELECT 
         u.user_id as id,
-        u.user_id as name,
+        CONCAT('user-', u.user_id) as name,
         SUM(sl.cigarette_count * ${column}) as value,
         MAX(CASE WHEN sl.log_date = CURDATE() THEN 1 ELSE 0 END) as hasSubmittedToday
       FROM Users u
