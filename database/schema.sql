@@ -77,6 +77,17 @@ CREATE TABLE IF NOT EXISTS Smoking_Log (
 );
 
 -- =====================
+-- VAPE BRAND
+-- =====================
+CREATE TABLE IF NOT EXISTS Vape_Brand (
+    brand_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    type VARCHAR(50),
+    nicotine_per_ml DECIMAL(5,2),
+    avg_puffs_per_ml INT
+);
+
+-- =====================
 -- VAPE LOG
 -- =====================
 CREATE TABLE IF NOT EXISTS Vape_Log (
@@ -88,7 +99,9 @@ CREATE TABLE IF NOT EXISTS Vape_Log (
     flavor VARCHAR(50),
     pg_percentage INT,
     user_id INT,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    brand_id INT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (brand_id) REFERENCES Vape_Brand(brand_id)
 );
 
 -- =====================
