@@ -18,15 +18,17 @@ export const getLeaderboard = async (req, res) => {
       SELECT 
         u.user_id as id,
         CONCAT('user-', u.user_id) as name,
-        SUM(sl.cigarette_count * ${column}) as value,
-        MAX(CASE WHEN sl.log_date = CURDATE() THEN 1 ELSE 0 END) as hasSubmittedToday
+        COALESCE(SUM(sl.cigarette_count * ${column}), 0) as value,
+        MAX(CASE WHEN sl.log_date = CURDATE() THEN 1 ELSE 0 END) as hasSubmittedToday,
+        COUNT(sl.log_id) as logCount
       FROM Users u
-      JOIN Smoking_Log sl ON u.user_id = sl.user_id
-      JOIN Cigarette_Brand cb ON sl.brand_id = cb.brand_id
-      WHERE sl.log_date >= ${dateFilter}
+      LEFT JOIN Smoking_Log sl ON u.user_id = sl.user_id AND sl.log_date >= ${dateFilter}
+      LEFT JOIN Cigarette_Brand cb ON sl.brand_id = cb.brand_id
       GROUP BY u.user_id, u.user_name
-      ORDER BY value ASC
-      LIMIT 10
+      ORDER BY 
+        CASE WHEN COUNT(sl.log_id) = 0 THEN 1 ELSE 0 END ASC, -- Users with no input go to bottom
+        value ASC
+      LIMIT 50
     `;
 
 		const [rows] = await pool.query(query);
