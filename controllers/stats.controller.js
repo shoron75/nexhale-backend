@@ -70,10 +70,7 @@ const getZone = (nicotine, cei) => {
 	else if (cei > 150) ceiZone = "Yellow";
 
 	const zones = ["Green", "Yellow", "Red"];
-	const worstIdx = Math.max(
-		zones.indexOf(nicZone),
-		zones.indexOf(ceiZone),
-	);
+	const worstIdx = Math.max(zones.indexOf(nicZone), zones.indexOf(ceiZone));
 	return zones[worstIdx];
 };
 
@@ -137,23 +134,29 @@ export const getSummary = async (req, res) => {
              FROM Smoking_Log sl
              JOIN Cigarette_Brand cb ON sl.brand_id = cb.brand_id
              WHERE sl.user_id = ? AND DATE(sl.log_date) = CURDATE()`,
-			[userId]
+			[userId],
 		);
 
 		let dailyNic = parseFloat(todaySmoke[0].nic || 0);
 		let dailyCEI = parseFloat(todaySmoke[0].tar || 0);
+		let totalPuffs = 0;
+		let totalLiquid = 0;
 
 		todayVape.forEach((log) => {
 			const m = calculateVapeMetrics(log);
 			dailyNic += m.nicotine;
 			dailyCEI += m.cei;
+			totalPuffs += parseInt(log.puffs || 0);
+			totalLiquid += parseFloat(log.liquid_amount || 0);
 		});
 
 		const combined = {
 			totalNicotine: (
 				parseFloat(smokeStats.totalNicotine || 0) + totalVapeNic
 			).toFixed(2),
-			totalTar: parseFloat(smokeStats.totalTar || 0).toFixed(2),
+			totalTar: (
+				parseFloat(smokeStats.totalTar || 0) + totalVapeCEI
+			).toFixed(2),
 			totalCost: parseFloat(smokeStats.totalCost || 0).toFixed(2),
 			totalCigarettes: parseInt(smokeStats.totalCigarettes || 0),
 			totalVapeCEI: totalVapeCEI.toFixed(2),
@@ -163,7 +166,9 @@ export const getSummary = async (req, res) => {
 			ytdCost: parseFloat(ytdCost || 0).toFixed(2),
 			dailyZone: getZone(dailyNic, dailyCEI),
 			dailyCigarettes: parseInt(todaySmoke[0].count || 0),
-			dailyTar: dailyCEI.toFixed(2)
+			dailyTar: dailyCEI.toFixed(2),
+			totalPuffs,
+			totalLiquid,
 		};
 
 		res.json(combined);
@@ -303,7 +308,7 @@ export const getWeeklyStats = async (req, res) => {
 						nicotine_amount: r.nicotine,
 						flavor: r.flavor,
 						pg_percentage: r.pg_percentage,
-						nicotine_per_ml: r.nicotine_per_ml
+						nicotine_per_ml: r.nicotine_per_ml,
 					});
 					nic += m.nicotine;
 					cei += m.cei;
