@@ -7,7 +7,7 @@ export const getQuitPlanProgress = async (req, res) => {
 	try {
 		// 1. Get current plan
 		const [plans] = await pool.query(
-			"SELECT target_nicotine_amount FROM Quit_Plan WHERE user_id = ? ORDER BY plan_id DESC LIMIT 1",
+			"SELECT target_nicotine_amount, daily_nicotine_allowance_mg FROM Quit_Plan WHERE user_id = ? ORDER BY plan_id DESC LIMIT 1",
 			[userId],
 		);
 
@@ -61,7 +61,7 @@ export const getQuitPlanProgress = async (req, res) => {
 
 		res.json({
 			plan: plans[0]
-				? { nicotine_limit: plans[0].target_nicotine_amount }
+				? { nicotine_limit: plans[0].target_nicotine_amount || 500 }
 				: { nicotine_limit: 500 },
 			totalConsumed: totalCigaretteNic + totalVapeNic,
 			weeklyProgress,
@@ -123,14 +123,8 @@ export const logProgress = async (req, res) => {
 // Log vape progress
 export const logVapeProgress = async (req, res) => {
 	const userId = req.user.id;
-	const {
-		puffs,
-		liquidAmount,
-		flavor,
-		pgPercentage,
-		nicotineAmount,
-		mood,
-	} = req.body;
+	const { puffs, liquidAmount, flavor, pgPercentage, nicotineAmount, mood } =
+		req.body;
 
 	try {
 		const [result] = await pool.query(

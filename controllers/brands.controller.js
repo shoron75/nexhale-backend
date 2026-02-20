@@ -19,3 +19,19 @@ export const getBrands = async (req, res) => {
 		res.status(500).json({ message: "Server error" });
 	}
 };
+export const getVapeBrands = async (req, res) => {
+	try {
+		const [rows] = await pool.query("SELECT * FROM Vape_Brand");
+		res.json(
+			rows.map((row) => ({
+				id: row.brand_id,
+				brand: row.name,
+				nicotineMg: row.nicotine_per_ml,
+				displayName: row.name,
+			})),
+		);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error" });
+	}
+};

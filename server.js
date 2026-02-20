@@ -8,6 +8,7 @@ import quitPlanRoutes from "./routes/quitPlan.routes.js";
 import leaderboardRoutes from "./routes/leaderboard.routes.js";
 import statsRoutes from "./routes/stats.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import aiQuitPlanRoutes from "./routes/aiQuitPlan.routes.js";
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use("/api/quit-plan", quitPlanRoutes);
 app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/ai-quit-plan", aiQuitPlanRoutes);
 
 app.get("/", (req, res) => {
 	res.send("Nexhale API is running");
